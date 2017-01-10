@@ -21,6 +21,8 @@
 #include <wx/panel.h>
 #include <wx/frame.h>
 #include <wx/dirdlg.h>
+#include <wx/button.h>
+#include <wx/tglbtn.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -35,18 +37,31 @@ class MainFrame : public wxFrame
 		wxMenu* Menu;
 		wxMenuItem* openCatalogue;
 		wxScrolledWindow* Gallery;
-		wxPanel* ResultPicturePanel;
+		wxScrolledWindow* ResultPicturePanel;
 		wxPanel* SideBar;
 
 		wxString* PathToRAW;
 
+		wxString* DCRAWstring;
+		wxString* OptionsString;
+		wxString* PicturePathString;
+
+		wxButton* ProcessButton;
+
+		wxToggleButton* TestToggleButton;
+
 		enum {
-			ID_MENU_ITEM = 10000
+			ID_MENU_ITEM = 10000,
+			ID_PROCESS_BUTTON = 10001,
+
+			ID_TEST_TOGGLE_BUTTON = 10002
 		};
 	
 	public:
 
+		void testProcessing(wxCommandEvent& event);
 		void showGalleryIcons();
+		void processTask(wxCommandEvent& event);
 
 		void chooseCatalog(wxCommandEvent& event);
 		
