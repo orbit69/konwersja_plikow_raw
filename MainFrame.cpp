@@ -79,9 +79,15 @@ void MainFrame::chooseCatalog(wxCommandEvent& event)
 
 	//wxID_OK jesli uzytkownik wybral katalog i nacisnal ok.
 	if (dirDialog.ShowModal() == wxID_OK) {
-
+		PathToRAW = new wxString();
+		*PathToRAW = dirDialog.GetPath();
 	}
 	else {
 
 	}
+}
+
+void MainFrame::showGalleryIcons()
+{
+
 }

@@ -38,11 +38,15 @@ class MainFrame : public wxFrame
 		wxPanel* ResultPicturePanel;
 		wxPanel* SideBar;
 
+		wxString* PathToRAW;
+
 		enum {
 			ID_MENU_ITEM = 10000
 		};
 	
 	public:
+
+		void showGalleryIcons();
 
 		void chooseCatalog(wxCommandEvent& event);
 		
