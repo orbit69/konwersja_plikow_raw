@@ -21,6 +21,9 @@
 #include <wx/panel.h>
 #include <wx/frame.h>
 #include <wx/dirdlg.h>
+#include <wx/dir.h>
+#include <wx/tglbtn.h>
+#include <wx/stattext.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -40,13 +43,15 @@ class MainFrame : public wxFrame
 
 		wxString* PathToRAW;
 
+		wxStaticText* info;
+
 		enum {
 			ID_MENU_ITEM = 10000
 		};
 	
 	public:
 
-		void showGalleryIcons();
+		void showGalleryIcons(wxString PathToRaw);
 
 		void chooseCatalog(wxCommandEvent& event);
 		

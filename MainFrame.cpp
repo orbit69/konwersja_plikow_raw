@@ -66,6 +66,11 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	this->Layout();
 	
 	this->Centre( wxBOTH );
+
+	wxImage::AddHandler(new wxJPEGHandler);
+
+	/*DEBUG*/
+	info = new wxStaticText(ResultPicturePanel,wxID_ANY,wxString("info"));
 }
 
 MainFrame::~MainFrame()
@@ -75,19 +80,41 @@ MainFrame::~MainFrame()
 void MainFrame::chooseCatalog(wxCommandEvent& event)
 {
 	wxDirDialog dirDialog(NULL, _T("Choose directory"), "", wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST);
-	dirDialog.SetPath(_T("C:"));
+	dirDialog.SetPath(_T("D:"));
 
 	//wxID_OK jesli uzytkownik wybral katalog i nacisnal ok.
 	if (dirDialog.ShowModal() == wxID_OK) {
 		PathToRAW = new wxString();
 		*PathToRAW = dirDialog.GetPath();
+
+		this->showGalleryIcons(*PathToRAW);
 	}
 	else {
 
 	}
 }
 
-void MainFrame::showGalleryIcons()
+void MainFrame::showGalleryIcons(wxString PathToRAW)
 {
+	wxArrayString* files = new wxArrayString();
+	wxDir::GetAllFiles(PathToRAW, files);
 
+	wxBitmapToggleButton** buttons = new wxBitmapToggleButton*[files->GetCount()];
+
+	int pos = 1;
+	for (int i = 0; i < files->GetCount(); ++i) {
+		if (files->Item(i).AfterLast(wxUniChar('.')) == "jpg") {
+			continue;
+		}
+
+		// tworzy thumbnail kazdego obrazu z wybranego folderu w formacie jpg
+		wxString cmd("dcraw.exe -e ");
+		wxShell(cmd.append(wxString("\"")).append(files->Item(i)).append("\""));
+
+		// tworzy przycisk BitmapToggleButton z kazdego thumbnail i dodaje go do galerii	
+		wxString thumbnail(files->Item(i).BeforeLast(wxUniChar('.')));
+		thumbnail.append(".thumb.jpg");
+		buttons[i] = new wxBitmapToggleButton(Gallery, wxID_ANY, wxBitmap(wxImage(thumbnail, wxBITMAP_TYPE_JPEG).Scale(150, 90)), wxPoint(pos, 1));
+		pos += 159;
+	}
 }
