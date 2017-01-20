@@ -26,7 +26,7 @@
 #include <wx/stattext.h>
 
 #include <wx/log.h>
-//#include "ToggleTooltipButton.h"
+#include "ToggleTooltipButton.h"
 
 #include <wx/button.h>
 
@@ -56,7 +56,7 @@ class MainFrame : public wxFrame
 
 		//sideBar
 		
-		ToggleTooltipButton* optionButtons[15];
+		ToggleTooltipButton** optionButtons;
 
 		wxScrolledCanvas* ResultPicturePanel;
 

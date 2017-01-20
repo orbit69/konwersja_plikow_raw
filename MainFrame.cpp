@@ -7,7 +7,7 @@
 
 #include "MainFrame.h"
 
-#include "ToggleTooltipButton.h"
+//#include "ToggleTooltipButton.h"
 
 
 #include <wx/dcclient.h>
@@ -74,6 +74,7 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	HorizontalSizer->Add( SideBarSizer, 0, wxALIGN_BOTTOM|wxFIXED_MINSIZE, 0 );
 
 	/* PRZYCISKI OPCJI */
+	optionButtons = new ToggleTooltipButton*[15];
 	optionButtons[0] = new ToggleTooltipButton(SideBar, ID_OPTION_BUTTON1, wxString("When shadows appear foggy, you need to raise the darkness level."), wxString("-k darkness"), wxPoint(1, 1));
 	optionButtons[1] = new ToggleTooltipButton(SideBar, ID_OPTION_BUTTON2, wxString("When highlights appear pink, you need to lower the saturation level."), wxString("-s saturation"), wxPoint(1, 30));
 	optionButtons[2] = new ToggleTooltipButton(SideBar, ID_OPTION_BUTTON3, wxString("Use wavelets to erase noise while preserving real detail. The best threshold should be somewhere between 100 and 1000."), wxString("-n noise_threshold"), wxPoint(1, 60));
