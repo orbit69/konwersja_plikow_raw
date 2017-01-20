@@ -14,6 +14,7 @@
 
 MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxFrame( parent, id, title, pos, size, style )
 {
+	dialogTexts = initDialogTexts();
 
 	ResultImage = 0;
 	wxImage::AddHandler(new wxJPEGHandler);
@@ -107,6 +108,21 @@ MainFrame::~MainFrame()
 {
 }
 
+wxString* MainFrame::initDialogTexts() {
+	wxString* result = new wxString[14];
+	result[0] = "Podaj poziom ciemnoœci";
+	result[1] = "Podaj obni¿enie saturacji";
+	result[2] = "Podaj próg szumu (optymalnie od 100 do 1000)";
+	result[3] = "Podaj powiêkszenie poziomu warstw czerwonych i zielonych (optymalnie od 0.999 do 1.001)";
+	result[5] = "Podaj wyjœciow¹ przestrzeñ kolorów (zgodnie z toolTip)";
+	result[8] = "Podaj opcjê z toolTipa";
+	result[11] = "Podaj dzielnik poziomu bieli (1.0 domyœlnie)";
+	result[12] = "Podaj wartoœæ krzywej gamma";
+	result[13] = "Podaj wartoœæ obrócenia (zgodnie z opcjami na przycisku)";
+
+	return result;
+}
+
 void MainFrame::chooseCatalog(wxCommandEvent& event)
 {
 	wxDirDialog dirDialog(NULL, _T("Choose directory"), "", wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST);
@@ -188,123 +204,51 @@ int intToStr(int x, unsigned char str[], int d)
 	return i;
 }
 
+bool MainFrame::doFuncNeedDialog(wxCommandEvent& event) {
+	int evtId = event.GetId();
+	if (evtId == ID_OPTION_BUTTON1 ||
+		evtId == ID_OPTION_BUTTON2 ||
+		evtId == ID_OPTION_BUTTON3 ||
+		evtId == ID_OPTION_BUTTON4 ||
+		evtId == ID_OPTION_BUTTON6 ||
+		evtId == ID_OPTION_BUTTON9 ||
+		evtId == ID_OPTION_BUTTON12 ||
+		evtId == ID_OPTION_BUTTON13 ||
+		evtId == ID_OPTION_BUTTON14)
+		return true;
+	else return false;
+}
+
+wxString MainFrame::getOnlyOption(wxString string) {
+	return string.BeforeFirst(wxUniChar(' '));
+}
+
 void MainFrame::handleOptionButton(wxCommandEvent& event) {
+	bool doNeedDialog = doFuncNeedDialog(event);
+
 	dialog = nullptr;
 	userInput = new wxString();
+	
+		wxToggleButton* TestToggleButton = dynamic_cast<wxToggleButton*>(event.GetEventObject());
+	if (doNeedDialog == false) {
+		if (TestToggleButton->GetValue() == true) {
+			OptionsString->Append(" ");
+			OptionsString->Append(TestToggleButton->GetLabel());
+			OptionsString->Append(" ");
+		}
+	}
+	else {
+		if (TestToggleButton->GetValue() == true) {
+			OptionsString->Append(" ");
+			OptionsString->Append(getOnlyOption(TestToggleButton->GetLabel()));
+			OptionsString->Append(" ");
+			dialog = new wxTextEntryDialog(this, dialogTexts[event.GetId()-10001]);
+			dialog->ShowModal();
 
-		/*dialog = new wxTextEntryDialog(this, wxString("Tutaj jakas informacja jaki ma byc input"));
-		dialog->ShowModal();
-
-		*userInput = dialog->GetValue();	// w userInput jest to co uzytkownik wpisze w pop-up dialog
-		*/
-	wxToggleButton* TestToggleButton = dynamic_cast<wxToggleButton*>(event.GetEventObject());
-	switch (event.GetId()) {
-	case 10001:
-		if (TestToggleButton->GetValue() == true) {
-			OptionsString->Append(" ");
-			OptionsString->Append(TestToggleButton->GetLabel());
-			OptionsString->Append(" ");
+			*userInput = dialog->GetValue();	// w userInput jest to co uzytkownik wpisze w pop-up dialog
+			OptionsString->append(*userInput);
+			OptionsString->append(" ");
 		}
-
-		break;
-	case 10002:
-		if (TestToggleButton->GetValue() == true) {
-			OptionsString->Append(" ");
-			OptionsString->Append(TestToggleButton->GetLabel());
-			OptionsString->Append(" ");
-		}
-		break;
-	case 10003:
-		if (TestToggleButton->GetValue() == true) {
-			OptionsString->Append(" ");
-			OptionsString->Append(TestToggleButton->GetLabel());
-			OptionsString->Append(" ");
-		}
-		break;
-	case 10004:
-		if (TestToggleButton->GetValue() == true) {
-			OptionsString->Append(" ");
-			OptionsString->Append(TestToggleButton->GetLabel());
-			OptionsString->Append(" ");
-		}
-		break;
-	case 10005:
-		if (TestToggleButton->GetValue() == true) {
-			OptionsString->Append(" ");
-			OptionsString->Append(TestToggleButton->GetLabel());
-			OptionsString->Append(" ");
-		}
-		break;
-	case 10006:
-		if (TestToggleButton->GetValue() == true) {
-			OptionsString->Append(" ");
-			OptionsString->Append(TestToggleButton->GetLabel());
-			OptionsString->Append(" ");
-		}
-		break;
-	case 10007:
-		if (TestToggleButton->GetValue() == true) {
-			OptionsString->Append(" ");
-			OptionsString->Append(TestToggleButton->GetLabel());
-			OptionsString->Append(" ");
-		}
-		break;
-	case 10008:
-		if (TestToggleButton->GetValue() == true) {
-			OptionsString->Append(" ");
-			OptionsString->Append(TestToggleButton->GetLabel());
-			OptionsString->Append(" ");
-		}
-		break;
-	case 10009:
-		if (TestToggleButton->GetValue() == true) {
-			OptionsString->Append(" ");
-			OptionsString->Append(TestToggleButton->GetLabel());
-			OptionsString->Append(" ");
-		}
-		break;
-	case 10010:
-		if (TestToggleButton->GetValue() == true) {
-			OptionsString->Append(" ");
-			OptionsString->Append(TestToggleButton->GetLabel());
-			OptionsString->Append(" ");
-		}
-		break;
-	case 10011:
-		if (TestToggleButton->GetValue() == true) {
-			OptionsString->Append(" ");
-			OptionsString->Append(TestToggleButton->GetLabel());
-			OptionsString->Append(" ");
-		}
-		break;
-	case 10012:
-		if (TestToggleButton->GetValue() == true) {
-			OptionsString->Append(" ");
-			OptionsString->Append(TestToggleButton->GetLabel());
-			OptionsString->Append(" ");
-		}
-		break;
-	case 10013:
-		if (TestToggleButton->GetValue() == true) {
-			OptionsString->Append(" ");
-			OptionsString->Append(TestToggleButton->GetLabel());
-			OptionsString->Append(" ");
-		}
-		break;
-	case 10014:
-		if (TestToggleButton->GetValue() == true) {
-			OptionsString->Append(" ");
-			OptionsString->Append(TestToggleButton->GetLabel());
-			OptionsString->Append(" ");
-		}
-		break;
-	case 10018:
-		if (TestToggleButton->GetValue() == true) {
-			OptionsString->Append(" ");
-			OptionsString->Append(TestToggleButton->GetLabel());
-			OptionsString->Append(" ");
-		}
-		break;
 	}
 }
 
@@ -362,8 +306,7 @@ void MainFrame::printTiffToResultPanel(wxString* pathToResultPicture) {
 	TiffPicturePath.append(".tiff\"");
 	TiffPicturePath.Replace(wxString("\""), wxString(""));
 
-	//to bedzie dla opcji zoom.
-	//ResultPicturePanel->SetScrollbars(25, 25, 200, 200);
+	
 	ResultImage = new wxImage(TiffPicturePath, wxBITMAP_TYPE_TIFF);
 	
 	int a, b;
@@ -391,5 +334,9 @@ void MainFrame::WxScrolledWindow1UpdateUI(wxUpdateUIEvent& event)
 	
 
 void MainFrame::zoomButtonClicked(wxCommandEvent& event) {
+	int a, b;
+	ResultPicturePanel->GetSize(&a, &b);
+	*ResultImage = ResultImage->Scale(5 * a, 5 * b);
 
+	ResultPicturePanel->SetScrollbars(25, 25, a/5, b/5);
 }
