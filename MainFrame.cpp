@@ -6,11 +6,17 @@
 ///////////////////////////////////////////////////////////////////////////
 
 #include "MainFrame.h"
+#include <wx/log.h>
+
 
 ///////////////////////////////////////////////////////////////////////////
 
 MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxFrame( parent, id, title, pos, size, style )
 {
+	DCRAWstring = new wxString("dcraw.exe ");
+	OptionsString = new wxString();
+	PicturePathString = new wxString("\"C:\\Users\\Szymon\\Desktop\\proj_GFK\\porj_GFK\\Picture Folder\\RAW_SONY_A900.ARW\"");
+
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 	
 	MenuBar = new wxMenuBar( 0 );
@@ -41,7 +47,7 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	wxBoxSizer* HorizontalSizer;
 	HorizontalSizer = new wxBoxSizer( wxHORIZONTAL );
 	
-	ResultPicturePanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxSize( 1150,700 ), wxTAB_TRAVERSAL );
+	ResultPicturePanel = new wxScrolledWindow( this, wxID_ANY, wxDefaultPosition, wxSize( 1150,700 ), wxTAB_TRAVERSAL );
 	ResultPicturePanel->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ) );
 	
 	HorizontalSizer->Add( ResultPicturePanel, 1, wxALL, 5 );
@@ -54,11 +60,21 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	SideBar->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_ACTIVEBORDER ) );
 	
 	SideBarSizer->Add( SideBar, 1, wxEXPAND | wxALL, 5 );
-	
+
+
+	wxBoxSizer* ProcessButtonSizer = new wxBoxSizer(wxHORIZONTAL);
+	ProcessButton = new wxButton(SideBar,MainFrame::ID_PROCESS_BUTTON,_T("PROCESS"));
+
+	//test toggle button
+	TestToggleButton = new wxToggleButton(SideBar, MainFrame::ID_TEST_TOGGLE_BUTTON, "-T");
+
+	ProcessButtonSizer->Add(ProcessButton,wxSizerFlags().Align(wxALIGN_BOTTOM).Shaped());
+	ProcessButton->Fit();
+	ProcessButtonSizer->Fit(SideBar);
+	SideBar->SetSizer(ProcessButtonSizer);
 	
 	HorizontalSizer->Add( SideBarSizer, 0, wxALIGN_BOTTOM|wxFIXED_MINSIZE, 0 );
-	
-	
+
 	MainSizer->Add( HorizontalSizer, 0, 0, 5 );
 	
 	
@@ -117,4 +133,31 @@ void MainFrame::showGalleryIcons(wxString PathToRAW)
 		buttons[i] = new wxBitmapToggleButton(Gallery, wxID_ANY, wxBitmap(wxImage(thumbnail, wxBITMAP_TYPE_JPEG).Scale(150, 90)), wxPoint(pos, 1));
 		pos += 159;
 	}
+}
+
+void MainFrame::processTask(wxCommandEvent& event) {
+	DCRAWstring->Append(" ");
+	DCRAWstring->Append(*OptionsString);
+	DCRAWstring->Append(" ");
+	DCRAWstring->Append(*PicturePathString);
+
+	wxArrayString output;
+	wxArrayString errors;
+
+	wxSafeShowMessage(_T("get label"), *DCRAWstring);
+
+	wxShell(*DCRAWstring);
+
+	delete(DCRAWstring);
+	DCRAWstring = new wxString("dcraw.exe ");
+}
+
+void MainFrame::testProcessing(wxCommandEvent& event) {
+	if (TestToggleButton->GetValue() == true) {
+		OptionsString->Append(" ");
+		OptionsString->Append(TestToggleButton->GetLabel());
+		OptionsString->Append(" ");
+		wxSafeShowMessage(_T("get label"),TestToggleButton->GetLabel());
+	}
+
 }
