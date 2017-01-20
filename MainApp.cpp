@@ -33,7 +33,6 @@ BEGIN_EVENT_TABLE(MainFrame, wxFrame)
 	EVT_BUTTON(MainFrame::ID_ZOOM_BUTTON,MainFrame::zoomButtonClicked)
 	
 	EVT_UPDATE_UI(ID_CANVAS_SCROLL_WINDOW, MainFrame::WxScrolledWindow1UpdateUI)
-// >>>>>>> 6b2ce69a7bbf8d0030d91c9eda58109cd0fa1125
 END_EVENT_TABLE()
 
 bool MainApp::OnInit()
