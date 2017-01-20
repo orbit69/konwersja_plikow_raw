@@ -40,10 +40,12 @@ class MainFrame : public wxFrame
 		wxMenu* Menu;
 		wxMenuItem* openCatalogue;
 		wxScrolledWindow* Gallery;
-		wxScrolledWindow* ResultPicturePanel;
+		wxScrolledCanvas* ResultPicturePanel;
 		wxPanel* SideBar;
 
 		wxString* PathToRAW;
+
+		wxImage* ResultImage;
 
 
 		wxStaticText* info;
@@ -53,15 +55,18 @@ class MainFrame : public wxFrame
 		wxString* PicturePathString;
 
 		wxButton* ProcessButton;
+		wxButton* ZoomButton;
 
 		wxToggleButton* TestToggleButton;
+
+
 
 
 		enum {
 			ID_MENU_ITEM = 10000,
 			ID_PROCESS_BUTTON = 10001,
-
-			ID_TEST_TOGGLE_BUTTON = 10002
+			ID_TEST_TOGGLE_BUTTON = 10002,
+			ID_CANVAS_SCROLL_WINDOW = 10003
 		};
 	
 	public:
@@ -70,6 +75,7 @@ class MainFrame : public wxFrame
 		void showGalleryIcons(wxString PathToRaw);
 
 		void testProcessing(wxCommandEvent& event);
+		void WxScrolledWindow1UpdateUI(wxUpdateUIEvent& event);
 		void showGalleryIcons();
 		void processTask(wxCommandEvent& event);
 
@@ -81,6 +87,9 @@ class MainFrame : public wxFrame
 		~MainFrame();
 
 		DECLARE_EVENT_TABLE()
+
+private:
+	void printTiffToResultPanel(wxString*);
 	
 };
 

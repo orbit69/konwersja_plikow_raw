@@ -7,12 +7,18 @@
 
 #include "MainFrame.h"
 #include <wx/log.h>
+#include <wx/dcclient.h>
 
 
 ///////////////////////////////////////////////////////////////////////////
 
 MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxFrame( parent, id, title, pos, size, style )
 {
+
+	ResultImage = 0;
+	wxImage::AddHandler(new wxJPEGHandler);
+	wxImage::AddHandler(new wxTIFFHandler);
+
 	DCRAWstring = new wxString("dcraw.exe ");
 	OptionsString = new wxString();
 	PicturePathString = new wxString("\"C:\\Users\\Szymon\\Desktop\\proj_GFK\\porj_GFK\\Picture Folder\\RAW_SONY_A900.ARW\"");
@@ -47,8 +53,9 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	wxBoxSizer* HorizontalSizer;
 	HorizontalSizer = new wxBoxSizer( wxHORIZONTAL );
 	
-	ResultPicturePanel = new wxScrolledWindow( this, wxID_ANY, wxDefaultPosition, wxSize( 1150,700 ), wxTAB_TRAVERSAL );
+	ResultPicturePanel = new wxScrolledCanvas( this, MainFrame::ID_CANVAS_SCROLL_WINDOW, wxDefaultPosition, wxSize( 1150,700 ), wxTAB_TRAVERSAL );
 	ResultPicturePanel->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNHIGHLIGHT ) );
+	
 	
 	HorizontalSizer->Add( ResultPicturePanel, 1, wxALL, 5 );
 	
@@ -83,11 +90,13 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	
 	this->Centre( wxBOTH );
 
-	wxImage::AddHandler(new wxJPEGHandler);
-
+	
 	/*DEBUG*/
 	info = new wxStaticText(ResultPicturePanel,wxID_ANY,wxString("info"));
+
+	
 }
+
 
 MainFrame::~MainFrame()
 {
@@ -119,7 +128,7 @@ void MainFrame::showGalleryIcons(wxString PathToRAW)
 
 	int pos = 1;
 	for (int i = 0; i < files->GetCount(); ++i) {
-		if (files->Item(i).AfterLast(wxUniChar('.')) == "jpg") {
+		if (files->Item(i).AfterLast(wxUniChar('.')) == "jpg" || files->Item(i).AfterLast(wxUniChar('.')) == "tiff") {
 			continue;
 		}
 
@@ -131,6 +140,8 @@ void MainFrame::showGalleryIcons(wxString PathToRAW)
 		wxString thumbnail(files->Item(i).BeforeLast(wxUniChar('.')));
 		thumbnail.append(".thumb.jpg");
 		buttons[i] = new wxBitmapToggleButton(Gallery, wxID_ANY, wxBitmap(wxImage(thumbnail, wxBITMAP_TYPE_JPEG).Scale(150, 90)), wxPoint(pos, 1));
+		//append funcion handler
+		
 		pos += 159;
 	}
 }
@@ -141,12 +152,9 @@ void MainFrame::processTask(wxCommandEvent& event) {
 	DCRAWstring->Append(" ");
 	DCRAWstring->Append(*PicturePathString);
 
-	wxArrayString output;
-	wxArrayString errors;
-
-	wxSafeShowMessage(_T("get label"), *DCRAWstring);
-
 	wxShell(*DCRAWstring);
+
+	printTiffToResultPanel(PicturePathString);
 
 	delete(DCRAWstring);
 	DCRAWstring = new wxString("dcraw.exe ");
@@ -157,7 +165,40 @@ void MainFrame::testProcessing(wxCommandEvent& event) {
 		OptionsString->Append(" ");
 		OptionsString->Append(TestToggleButton->GetLabel());
 		OptionsString->Append(" ");
-		wxSafeShowMessage(_T("get label"),TestToggleButton->GetLabel());
 	}
 
 }
+
+void MainFrame::printTiffToResultPanel(wxString* pathToResultPicture) {
+	wxString TiffPicturePath = pathToResultPicture->BeforeLast(wxUniChar('.'));
+	TiffPicturePath.append(".tiff\"");
+	TiffPicturePath.Replace(wxString("\""), wxString(""));
+	wxSafeShowMessage(_T("get label"), TiffPicturePath);
+
+	//to bedzie dla opcji zoom.
+	//ResultPicturePanel->SetScrollbars(25, 25, 200, 200);
+	ResultImage = new wxImage(TiffPicturePath, wxBITMAP_TYPE_TIFF);
+	
+	int a, b;
+	ResultPicturePanel->GetSize(&a, &b);
+
+	*ResultImage = ResultImage->Scale(a,b);
+
+	wxBitmap bmp(*ResultImage);
+
+	wxClientDC dc(ResultPicturePanel);
+	dc.DrawBitmap(bmp, 0,0,true);
+
+	ResultPicturePanel->DoPrepareDC(dc);
+}
+
+void MainFrame::WxScrolledWindow1UpdateUI(wxUpdateUIEvent& event)
+{
+	if (ResultImage != 0) {
+		wxBitmap bitmap(*ResultImage);           // Tworzymy tymczasowa bitmape na podstawie Img_Cpy
+		wxClientDC dc(ResultPicturePanel);   // Pobieramy kontekst okna
+		ResultPicturePanel->DoPrepareDC(dc); // Musimy wywolac w przypadku wxScrolledWindow, zeby suwaki prawidlowo dzialaly
+		dc.DrawBitmap(bitmap, 0, 0, true);  // Rysujemy bitmape na kontekscie urzadzenia
+	}
+}
+	
