@@ -6,12 +6,8 @@
 ///////////////////////////////////////////////////////////////////////////
 
 #include "MainFrame.h"
-
-//#include "ToggleTooltipButton.h"
-
-
+#include "ToggleTooltipButton.h"
 #include <wx/dcclient.h>
-
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -90,6 +86,7 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	optionButtons[12] = new ToggleTooltipButton(SideBar, ID_OPTION_BUTTON13, wxString("Set the gamma curve, by default BT.709 (-g 2.222 4.5). If you prefer sRGB gamma, use -g 2.4 12.92. For a simple power curve, set the toe slope to zero."), wxString("-g power toe_slope"), wxPoint(1, 360));
 	optionButtons[13] = new ToggleTooltipButton(SideBar, ID_OPTION_BUTTON14, wxString("Flip the output image. By default, dcraw applies the flip specified by the camera. -t 0 disables all flipping."), wxString("-t [0-7,90,180,270]"), wxPoint(1, 390));
 	optionButtons[14] = new ToggleTooltipButton(SideBar, ID_OPTION_BUTTON15, wxString("Get .tiff format of picture"), wxString("-T"), wxPoint(1, 420));
+
 	
 	
 	
@@ -142,7 +139,7 @@ void MainFrame::showGalleryIcons(wxString PathToRAW)
 			continue;
 		}
 
-		// dodanie sciezki zdjecia z danego obrazu
+		// dodanie sciezke do zdjecia z danego obrazu
 		buttonsDescr[i] = files->Item(i);
 
 		// tworzy thumbnail kazdego obrazu z wybranego folderu w formacie jpg
@@ -192,6 +189,14 @@ int intToStr(int x, unsigned char str[], int d)
 }
 
 void MainFrame::handleOptionButton(wxCommandEvent& event) {
+	dialog = nullptr;
+	userInput = new wxString();
+
+		/*dialog = new wxTextEntryDialog(this, wxString("Tutaj jakas informacja jaki ma byc input"));
+		dialog->ShowModal();
+
+		*userInput = dialog->GetValue();	// w userInput jest to co uzytkownik wpisze w pop-up dialog
+		*/
 	wxToggleButton* TestToggleButton = dynamic_cast<wxToggleButton*>(event.GetEventObject());
 	switch (event.GetId()) {
 	case 10001:
@@ -200,6 +205,7 @@ void MainFrame::handleOptionButton(wxCommandEvent& event) {
 			OptionsString->Append(TestToggleButton->GetLabel());
 			OptionsString->Append(" ");
 		}
+
 		break;
 	case 10002:
 		if (TestToggleButton->GetValue() == true) {

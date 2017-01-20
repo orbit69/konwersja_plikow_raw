@@ -26,11 +26,10 @@
 #include <wx/stattext.h>
 
 #include <wx/log.h>
+#include <wx/textctrl.h>
+#include <wx/textdlg.h>
 #include "ToggleTooltipButton.h"
-
 #include <wx/button.h>
-
-
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -54,8 +53,12 @@ class MainFrame : public wxFrame
 		wxBitmapToggleButton** buttons;
 		wxString* buttonsDescr;
 
+
+		// pop-up dialog
+		wxTextEntryDialog* dialog;
+		wxString* userInput;
+
 		//sideBar
-		
 		ToggleTooltipButton** optionButtons;
 
 		wxScrolledCanvas* ResultPicturePanel;
@@ -65,7 +68,6 @@ class MainFrame : public wxFrame
 		wxImage* ResultImage;
 
 
-		wxStaticText* info;
 
 		wxString* DCRAWstring;
 		wxString* OptionsString;
