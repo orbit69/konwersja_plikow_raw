@@ -12,6 +12,7 @@ IMPLEMENT_APP(MainApp);
 
 BEGIN_EVENT_TABLE(MainFrame, wxFrame)
 	EVT_MENU(MainFrame::ID_MENU_ITEM,MainFrame::chooseCatalog)
+
 	EVT_TOGGLEBUTTON(MainFrame::ID_OPTION_BUTTON1, MainFrame::handleOptionButton)
 	EVT_TOGGLEBUTTON(MainFrame::ID_OPTION_BUTTON2, MainFrame::handleOptionButton)
 	EVT_TOGGLEBUTTON(MainFrame::ID_OPTION_BUTTON3, MainFrame::handleOptionButton)
@@ -26,6 +27,13 @@ BEGIN_EVENT_TABLE(MainFrame, wxFrame)
 	EVT_TOGGLEBUTTON(MainFrame::ID_OPTION_BUTTON12, MainFrame::handleOptionButton)
 	EVT_TOGGLEBUTTON(MainFrame::ID_OPTION_BUTTON13, MainFrame::handleOptionButton)
 	EVT_TOGGLEBUTTON(MainFrame::ID_OPTION_BUTTON14, MainFrame::handleOptionButton)
+	EVT_TOGGLEBUTTON(MainFrame::ID_OPTION_BUTTON15, MainFrame::handleOptionButton)
+
+	EVT_BUTTON(MainFrame::ID_PROCESS_BUTTON,MainFrame::processTask)
+	EVT_BUTTON(MainFrame::ID_ZOOM_BUTTON,MainFrame::zoomButtonClicked)
+	
+	EVT_UPDATE_UI(ID_CANVAS_SCROLL_WINDOW, MainFrame::WxScrolledWindow1UpdateUI)
+// >>>>>>> 6b2ce69a7bbf8d0030d91c9eda58109cd0fa1125
 END_EVENT_TABLE()
 
 bool MainApp::OnInit()
