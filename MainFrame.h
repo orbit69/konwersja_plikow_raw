@@ -24,9 +24,12 @@
 #include <wx/dir.h>
 #include <wx/tglbtn.h>
 #include <wx/stattext.h>
+
 #include <wx/log.h>
 #include <wx/textctrl.h>
 #include <wx/textdlg.h>
+#include "ToggleTooltipButton.h"
+#include <wx/button.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -41,21 +44,46 @@ class MainFrame : public wxFrame
 		wxMenu* Menu;
 		wxMenuItem* openCatalogue;
 		wxScrolledWindow* Gallery;
-		wxPanel* ResultPicturePanel;
+
+		
 		wxScrolledWindow* SideBar;
 
 		// przyciski galerii
+		int buttonsCount;
 		wxBitmapToggleButton** buttons;
 		wxString* buttonsDescr;
 
+
 		// pop-up dialog
 		wxTextEntryDialog* dialog;
+		wxString* userInput;
+
+		//sideBar
+		ToggleTooltipButton** optionButtons;
+
+		wxScrolledCanvas* ResultPicturePanel;
 
 		wxString* PathToRAW;
-		wxString* userInput;
+
+		wxImage* ResultImage;
+
+
+
+		wxString* DCRAWstring;
+		wxString* OptionsString;
+		wxString* PicturePathString;
+
+		wxButton* ProcessButton;
+		wxButton* ZoomButton;
+
+		wxToggleButton* TestToggleButton;
+
+
+
 
 		enum {
 			ID_MENU_ITEM = 10000,
+
 			ID_OPTION_BUTTON1 = 10001,
 			ID_OPTION_BUTTON2 = 10002,
 			ID_OPTION_BUTTON3 = 10003,
@@ -69,12 +97,29 @@ class MainFrame : public wxFrame
 			ID_OPTION_BUTTON11 = 10011,
 			ID_OPTION_BUTTON12 = 10012,
 			ID_OPTION_BUTTON13 = 10013,
-			ID_OPTION_BUTTON14 = 10014
+			ID_OPTION_BUTTON14 = 10014,
+			ID_OPTION_BUTTON15 = 10018,
+			ID_PROCESS_BUTTON = 10016,
+			ID_CANVAS_SCROLL_WINDOW = 10017,
+			ID_ZOOM_BUTTON = 10019
+
 		};
 	
 	public:
 
+
 		void showGalleryIcons(wxString PathToRaw);
+		void processTask(wxCommandEvent& event);
+		void zoomButtonClicked(wxCommandEvent& event);
+
+
+		
+		void WxScrolledWindow1UpdateUI(wxUpdateUIEvent& event);
+		void showGalleryIcons();
+		
+
+
+
 		void chooseCatalog(wxCommandEvent& event);
 		void handleOptionButton(wxCommandEvent& event);
 		
@@ -83,6 +128,11 @@ class MainFrame : public wxFrame
 		~MainFrame();
 
 		DECLARE_EVENT_TABLE()
+
+private:
+	void printTiffToResultPanel(wxString*);
+	wxString getPicturePath();
+	void reset();
 	
 };
 
