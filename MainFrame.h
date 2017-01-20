@@ -25,7 +25,8 @@
 #include <wx/tglbtn.h>
 #include <wx/stattext.h>
 #include <wx/log.h>
-//#include "ToggleTooltipButton.h"
+#include <wx/textctrl.h>
+#include <wx/textdlg.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -47,9 +48,11 @@ class MainFrame : public wxFrame
 		wxBitmapToggleButton** buttons;
 		wxString* buttonsDescr;
 
-		wxString* PathToRAW;
+		// pop-up dialog
+		wxTextEntryDialog* dialog;
 
-		wxStaticText* info;
+		wxString* PathToRAW;
+		wxString* userInput;
 
 		enum {
 			ID_MENU_ITEM = 10000,
@@ -66,7 +69,7 @@ class MainFrame : public wxFrame
 			ID_OPTION_BUTTON11 = 10011,
 			ID_OPTION_BUTTON12 = 10012,
 			ID_OPTION_BUTTON13 = 10013,
-			ID_OPTION_BUTTON14 = 10014,
+			ID_OPTION_BUTTON14 = 10014
 		};
 	
 	public:
