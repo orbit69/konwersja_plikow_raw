@@ -24,6 +24,8 @@
 #include <wx/dir.h>
 #include <wx/tglbtn.h>
 #include <wx/stattext.h>
+#include <wx/log.h>
+//#include "ToggleTooltipButton.h"
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -39,21 +41,39 @@ class MainFrame : public wxFrame
 		wxMenuItem* openCatalogue;
 		wxScrolledWindow* Gallery;
 		wxPanel* ResultPicturePanel;
-		wxPanel* SideBar;
+		wxScrolledWindow* SideBar;
+
+		// przyciski galerii
+		wxBitmapToggleButton** buttons;
+		wxString* buttonsDescr;
 
 		wxString* PathToRAW;
 
 		wxStaticText* info;
 
 		enum {
-			ID_MENU_ITEM = 10000
+			ID_MENU_ITEM = 10000,
+			ID_OPTION_BUTTON1 = 10001,
+			ID_OPTION_BUTTON2 = 10002,
+			ID_OPTION_BUTTON3 = 10003,
+			ID_OPTION_BUTTON4 = 10004,
+			ID_OPTION_BUTTON5 = 10005,
+			ID_OPTION_BUTTON6 = 10006,
+			ID_OPTION_BUTTON7 = 10007,
+			ID_OPTION_BUTTON8 = 10008,
+			ID_OPTION_BUTTON9 = 10009,
+			ID_OPTION_BUTTON10 = 10010,
+			ID_OPTION_BUTTON11 = 10011,
+			ID_OPTION_BUTTON12 = 10012,
+			ID_OPTION_BUTTON13 = 10013,
+			ID_OPTION_BUTTON14 = 10014,
 		};
 	
 	public:
 
 		void showGalleryIcons(wxString PathToRaw);
-
 		void chooseCatalog(wxCommandEvent& event);
+		void handleOptionButton(wxCommandEvent& event);
 		
 		MainFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 1263,800 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 		
