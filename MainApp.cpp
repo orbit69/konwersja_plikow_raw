@@ -30,7 +30,7 @@ BEGIN_EVENT_TABLE(MainFrame, wxFrame)
 	EVT_TOGGLEBUTTON(MainFrame::ID_OPTION_BUTTON15, MainFrame::handleOptionButton)
 
 	EVT_BUTTON(MainFrame::ID_PROCESS_BUTTON,MainFrame::processTask)
-	EVT_BUTTON(MainFrame::ID_ZOOM_BUTTON,MainFrame::zoomButtonClicked)
+	EVT_TOGGLEBUTTON(MainFrame::ID_ZOOM_BUTTON,MainFrame::zoomButtonClicked)
 	
 	EVT_UPDATE_UI(ID_CANVAS_SCROLL_WINDOW, MainFrame::WxScrolledWindow1UpdateUI)
 END_EVENT_TABLE()

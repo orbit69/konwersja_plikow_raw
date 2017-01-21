@@ -66,6 +66,7 @@ class MainFrame : public wxFrame
 		wxString* PathToRAW;
 
 		wxImage* ResultImage;
+		wxImage* ResultImageCopy;
 
 
 
@@ -74,9 +75,9 @@ class MainFrame : public wxFrame
 		wxString* PicturePathString;
 
 		wxButton* ProcessButton;
-		wxButton* ZoomButton;
+		wxToggleButton* ZoomButton;
 
-		wxToggleButton* TestToggleButton;
+		
 
 
 

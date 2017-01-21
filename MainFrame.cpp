@@ -88,8 +88,8 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	optionButtons[13] = new ToggleTooltipButton(SideBar, ID_OPTION_BUTTON14, wxString("Flip the output image. By default, dcraw applies the flip specified by the camera. -t 0 disables all flipping."), wxString("-t [0-7,90,180,270]"), wxPoint(1, 390));
 	optionButtons[14] = new ToggleTooltipButton(SideBar, ID_OPTION_BUTTON15, wxString("Get .tiff format of picture"), wxString("-T"), wxPoint(1, 420));
 
-	ProcessButton = new wxButton(SideBar,MainFrame::ID_ZOOM_BUTTON,_T("ZOOM"),wxPoint(1,570));
-	ZoomButton = new wxButton(SideBar, MainFrame::ID_PROCESS_BUTTON, _T("PROCESS"),wxPoint(1,600));
+	ZoomButton = new wxToggleButton(SideBar,MainFrame::ID_ZOOM_BUTTON,_T("ZOOM"),wxPoint(1,570));
+	ProcessButton = new wxButton(SideBar, MainFrame::ID_PROCESS_BUTTON, _T("PROCESS"),wxPoint(1,600));
 	
 	MainSizer->Add( HorizontalSizer, 0, 0, 5 );
 	
@@ -353,8 +353,23 @@ void MainFrame::WxScrolledWindow1UpdateUI(wxUpdateUIEvent& event)
 void MainFrame::zoomButtonClicked(wxCommandEvent& event) {
 	int a, b;
 	ResultPicturePanel->GetSize(&a, &b);
-	if (ResultImage != nullptr) {
-		*ResultImage = ResultImage->Scale(5 * a, 5 * b);
-		ResultPicturePanel->SetScrollbars(25, 25, a / 5, b / 5);
+	if (dynamic_cast<wxToggleButton*>(event.GetEventObject())->GetValue() == true) {
+		if (ResultImage != nullptr) {
+			*ResultImage = ResultImage->Scale(5 * a, 5 * b);
+
+			ResultPicturePanel->SetScrollbars(25, 25, a / 5, b / 5);
+		}
+	}
+	else {
+		ResultPicturePanel->SetScrollbars(0, 0,0,0);
+
+		*ResultImage = ResultImage->Scale(a, b);
+
+		wxBitmap bmp(*ResultImage);
+
+		wxClientDC dc(ResultPicturePanel);
+		dc.DrawBitmap(bmp, 0, 0, true);
+
+		ResultPicturePanel->DoPrepareDC(dc);
 	}
 }
