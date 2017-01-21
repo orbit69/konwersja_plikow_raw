@@ -88,13 +88,9 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	optionButtons[13] = new ToggleTooltipButton(SideBar, ID_OPTION_BUTTON14, wxString("Flip the output image. By default, dcraw applies the flip specified by the camera. -t 0 disables all flipping."), wxString("-t [0-7,90,180,270]"), wxPoint(1, 390));
 	optionButtons[14] = new ToggleTooltipButton(SideBar, ID_OPTION_BUTTON15, wxString("Get .tiff format of picture"), wxString("-T"), wxPoint(1, 420));
 
-	
-	
-	
 	ProcessButton = new wxButton(SideBar,MainFrame::ID_ZOOM_BUTTON,_T("ZOOM"),wxPoint(1,570));
 	ZoomButton = new wxButton(SideBar, MainFrame::ID_PROCESS_BUTTON, _T("PROCESS"),wxPoint(1,600));
 	
-
 	MainSizer->Add( HorizontalSizer, 0, 0, 5 );
 	
 	this->SetSizer( MainSizer );
@@ -106,6 +102,37 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 
 MainFrame::~MainFrame()
 {
+}
+
+/*DEBUG*/
+void reverse(unsigned char *str, int len)
+{
+	int i = 0, j = len - 1, temp;
+	while (i<j)
+	{
+		temp = str[i];
+		str[i] = str[j];
+		str[j] = temp;
+		i++; j--;
+	}
+}
+int intToStr(int x, unsigned char str[], int d)
+{
+	int i = 0;
+	while (x)
+	{
+		str[i++] = (x % 10) + '0';
+		x = x / 10;
+	}
+
+	// If number of digits required is more, then
+	// add 0s at the beginning
+	while (i < d)
+		str[i++] = '0';
+
+	reverse(str, i);
+	str[i] = '\0';
+	return i;
 }
 
 wxString* MainFrame::initDialogTexts() {
@@ -145,18 +172,32 @@ void MainFrame::showGalleryIcons(wxString PathToRAW)
 	wxArrayString* files = new wxArrayString();
 	wxDir::GetAllFiles(PathToRAW, files);
 
-	buttonsCount = files->GetCount();
-	buttons = new wxBitmapToggleButton*[files->GetCount()];
-	buttonsDescr = new wxString[files->GetCount()];
-
-	int pos = 1;
+	// liczy ile jest plikow RAW w folderze
+	// w kazdym momencie w folderze powinny znajdowac sie TYLKO pliki RAW + wygenerowane thumbnail JPG i wyniki TIFF
+	int RAWfiles = 0;
 	for (int i = 0; i < files->GetCount(); ++i) {
-		if (files->Item(i).AfterLast(wxUniChar('.')) == "jpg" || files->Item(i).AfterLast(wxUniChar('.')) == "tiff") {
+		if (files->Item(i).AfterLast(wxUniChar('.')) == "jpg" || 
+			files->Item(i).AfterLast(wxUniChar('.')) == "tiff" ||
+			files->Item(i).AfterLast(wxUniChar('.')) == "ppm") {
+			continue;
+		}
+		RAWfiles++;
+	}
+
+	buttonsCount = RAWfiles;
+	buttons = new wxBitmapToggleButton*[RAWfiles];
+	buttonsDescr = new wxString[RAWfiles];
+
+	int pos = 1, index = 0;
+	for (int i = 0; i < files->GetCount(); ++i) {
+		if (files->Item(i).AfterLast(wxUniChar('.')) == "jpg" ||
+			files->Item(i).AfterLast(wxUniChar('.')) == "tiff" ||
+			files->Item(i).AfterLast(wxUniChar('.')) == "ppm") {
 			continue;
 		}
 
 		// dodanie sciezke do zdjecia z danego obrazu
-		buttonsDescr[i] = files->Item(i);
+		buttonsDescr[index] = files->Item(i);
 
 		// tworzy thumbnail kazdego obrazu z wybranego folderu w formacie jpg
 		wxString cmd("dcraw.exe -e ");
@@ -165,43 +206,11 @@ void MainFrame::showGalleryIcons(wxString PathToRAW)
 		// tworzy przycisk BitmapToggleButton z kazdego thumbnail i dodaje go do galerii	
 		wxString thumbnail(files->Item(i).BeforeLast(wxUniChar('.')));
 		thumbnail.append(".thumb.jpg");
-		buttons[i] = new wxBitmapToggleButton(Gallery, wxID_ANY, wxBitmap(wxImage(thumbnail, wxBITMAP_TYPE_JPEG).Scale(150, 90)), wxPoint(pos, 1));
-		//append funcion handler
+		buttons[index] = new wxBitmapToggleButton(Gallery, wxID_ANY, wxBitmap(wxImage(thumbnail, wxBITMAP_TYPE_JPEG).Scale(150, 90)), wxPoint(pos, 1));
 		
 		pos += 159;
+		index++;
 	}
-}
-
-
-/*DEBUG*/
-void reverse(unsigned char *str, int len)
-{
-	int i = 0, j = len - 1, temp;
-	while (i<j)
-	{
-		temp = str[i];
-		str[i] = str[j];
-		str[j] = temp;
-		i++; j--;
-	}
-}
-int intToStr(int x, unsigned char str[], int d)
-{
-	int i = 0;
-	while (x)
-	{
-		str[i++] = (x % 10) + '0';
-		x = x / 10;
-	}
-
-	// If number of digits required is more, then
-	// add 0s at the beginning
-	while (i < d)
-		str[i++] = '0';
-
-	reverse(str, i);
-	str[i] = '\0';
-	return i;
 }
 
 bool MainFrame::doFuncNeedDialog(wxCommandEvent& event) {
@@ -253,23 +262,28 @@ void MainFrame::handleOptionButton(wxCommandEvent& event) {
 }
 
 void MainFrame::processTask(wxCommandEvent& event) {
-	DCRAWstring->Append(" ");
-	DCRAWstring->Append(*OptionsString);
-	DCRAWstring->Append(" ");
-	
-	PicturePathString->append("\"");
-	PicturePathString->append( getPicturePath());
-	PicturePathString->append("\"");
+	try {
+		DCRAWstring->Append(" ");
+		DCRAWstring->Append(*OptionsString);
+		DCRAWstring->Append(" ");
 
-	DCRAWstring->Append(*PicturePathString);
+		PicturePathString->append("\"");
+		PicturePathString->append(getPicturePath());
+		PicturePathString->append("\"");
 
-	wxShell(*DCRAWstring);
+		DCRAWstring->Append(*PicturePathString);
 
-	printTiffToResultPanel(PicturePathString);
+		wxShell(*DCRAWstring);
+
+		printTiffToResultPanel(PicturePathString);
 
 
-	reset();
-	
+		reset();
+
+	}
+	catch (wxString msg) {
+		wxSafeShowMessage("Blad",msg);
+	}
 }
 
 void MainFrame::reset() {
@@ -289,11 +303,14 @@ void MainFrame::reset() {
 }
 
 wxString MainFrame::getPicturePath() {
-	int buttonNumb;
+	int buttonNumb = -1;
 	for (int i = 0; i < buttonsCount; i++) {
 		if (buttons[i]->GetValue() == true) {
 			buttonNumb = i;
 		}
+	}
+	if (buttonNumb == -1) {
+		throw wxString("Nie wybrano obrazka.");
 	}
 
 	wxString result = buttonsDescr[buttonNumb];
@@ -336,7 +353,8 @@ void MainFrame::WxScrolledWindow1UpdateUI(wxUpdateUIEvent& event)
 void MainFrame::zoomButtonClicked(wxCommandEvent& event) {
 	int a, b;
 	ResultPicturePanel->GetSize(&a, &b);
-	*ResultImage = ResultImage->Scale(5 * a, 5 * b);
-
-	ResultPicturePanel->SetScrollbars(25, 25, a/5, b/5);
+	if (ResultImage != nullptr) {
+		*ResultImage = ResultImage->Scale(5 * a, 5 * b);
+		ResultPicturePanel->SetScrollbars(25, 25, a / 5, b / 5);
+	}
 }
