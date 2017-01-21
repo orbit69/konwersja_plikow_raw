@@ -107,7 +107,7 @@ class MainFrame : public wxFrame
 	
 	public:
 
-
+		wxString getOnlyOption(wxString);
 		void showGalleryIcons(wxString PathToRaw);
 		void processTask(wxCommandEvent& event);
 		void zoomButtonClicked(wxCommandEvent& event);
@@ -133,6 +133,12 @@ private:
 	void printTiffToResultPanel(wxString*);
 	wxString getPicturePath();
 	void reset();
+	bool doFuncNeedDialog(wxCommandEvent& event);
+	wxString* initDialogTexts();
+
+private:
+	wxString* dialogTexts;
+
 	
 };
 
